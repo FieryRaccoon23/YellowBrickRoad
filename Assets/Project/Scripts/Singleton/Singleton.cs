@@ -17,7 +17,7 @@ namespace BluMarble.Singleton
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             if (m_Instance != null && m_Instance != this as T)
             {
@@ -27,6 +27,36 @@ namespace BluMarble.Singleton
             {
                 m_Instance = this as T;
             }
+        }
+
+        // Called only once
+        public virtual void PerformInit()
+        {
+
+        }
+
+        // Called every time the game starts e.g. entering from main menu to game
+        public virtual void PerformStart()
+        {
+
+        }
+
+        // Called on every update
+        public virtual void PerformUpdate()
+        {
+
+        }
+
+        // Called every time the game ends e.g. going from game to main menu
+        public virtual void PerformEnd() 
+        {
+
+        }
+
+        // Called once when the game is closed
+        public virtual void PerformFinish()
+        {
+
         }
     }
 }

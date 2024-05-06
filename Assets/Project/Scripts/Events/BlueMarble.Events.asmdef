@@ -1,7 +1,9 @@
 {
     "name": "BlueMarble.Events",
     "rootNamespace": "BluMarble.Events",
-    "references": [],
+    "references": [
+        "GUID:d8353387179e81e43a218fde704986bc"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
