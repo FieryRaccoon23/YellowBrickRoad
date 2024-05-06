@@ -1,0 +1,16 @@
+{
+    "name": "BluMarble.UI",
+    "rootNamespace": "BluMarble.UI",
+    "references": [
+        "GUID:d8353387179e81e43a218fde704986bc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,6 +1,6 @@
 {
-    "name": "Project.Game.Singleton",
-    "rootNamespace": "Project.Game.Singleton",
+    "name": "BluMarble.Singleton",
+    "rootNamespace": "BluMarble.Singleton",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

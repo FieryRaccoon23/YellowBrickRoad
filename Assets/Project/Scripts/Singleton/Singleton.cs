@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Project.Game.Singleton
+namespace BluMarble.Singleton
 {
     public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
