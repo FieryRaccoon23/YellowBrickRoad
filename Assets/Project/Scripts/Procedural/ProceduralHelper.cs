@@ -14,8 +14,8 @@ namespace BluMarble.Procedural
         [Tooltip("How fast the images should move.")]
         public float m_Speed;
 
-        [Tooltip("List of all the road segments.")]
-        private Vector3 m_MovingDirection;
+        [Tooltip("Direction where the objects will move.")]
+        public Vector3 m_MovingDirection;
     }
 
     public class ProceduralHelper : MonoBehaviour

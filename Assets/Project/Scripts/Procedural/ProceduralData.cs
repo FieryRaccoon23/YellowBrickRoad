@@ -9,6 +9,6 @@ namespace BluMarble.Procedural
     {
         [SerializeField]
         [Tooltip("One of the images will be randomly selected to be displayed here. The images should be cohesive.")]
-        private List<Image> m_Images;
+        private List<Sprite> m_Images;
     }
 }

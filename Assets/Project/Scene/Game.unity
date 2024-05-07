@@ -272,13 +272,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedProceduralTypeMetaData:
   - m_ProceduralObjectType: 0
-    m_Speed: 5
-  - m_ProceduralObjectType: 1
-    m_Speed: 10
-  - m_ProceduralObjectType: 2
-    m_Speed: 15
-  - m_ProceduralObjectType: 3
     m_Speed: 20
+    m_MovingDirection: {x: -1, y: 0, z: 0}
+  - m_ProceduralObjectType: 1
+    m_Speed: 15
+    m_MovingDirection: {x: -1, y: 0, z: 0}
+  - m_ProceduralObjectType: 2
+    m_Speed: 10
+    m_MovingDirection: {x: -1, y: 0, z: 0}
+  - m_ProceduralObjectType: 3
+    m_Speed: 5
+    m_MovingDirection: {x: -1, y: 0, z: 0}
 --- !u!4 &207386824
 Transform:
   m_ObjectHideFlags: 0
@@ -306,8 +310,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 508083a9fe58c9644b7e0130571ea3d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SerializedProceduralData: []
-  m_MovingDirection: {x: 1, y: 0, z: 1}
+  m_SerializedProceduralData:
+  - m_SerializedProceduralObjectTypeData:
+    - m_ProceduralData: {fileID: 11400000, guid: bf55c51036dfac24eb899a1c0f49fd62, type: 2}
+      m_ProceduralObjectType: 0
+    m_ProceduralRegionType: 0
+  m_SerializedProceduralObjectTypePrefab:
+  - m_ProceduralPrefab: {fileID: 5398195795295159543, guid: 7a25a4f1c52ab2842b61a61cf6a91e8b, type: 3}
+    m_ProceduralObjectType: 0
+  m_PooledParentObject: {fileID: 212655817}
+--- !u!1 &212655817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 212655818}
+  m_Layer: 0
+  m_Name: PooledObjects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &212655818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212655817}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &411972724
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,6 +820,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d20d1efe62d78da41948d4ff5f679006, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2063494741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2063494742}
+  - component: {fileID: 2063494743}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2063494742
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063494741}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2063494743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063494741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 106657d8dc35a84419b5fd229addf0a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -788,5 +874,7 @@ SceneRoots:
   - {fileID: 207386824}
   - {fileID: 1922704622}
   - {fileID: 1270253885}
+  - {fileID: 2063494742}
+  - {fileID: 212655818}
   - {fileID: 411972728}
   - {fileID: 1452377857}
