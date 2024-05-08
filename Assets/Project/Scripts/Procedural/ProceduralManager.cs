@@ -151,24 +151,25 @@ namespace BluMarble.Procedural
                 int NumOfObjs = (int)(ScreenWidth / CurrentSpriteWidth);
                 NumOfObjs += m_NumOfObjsOffset;
 
+                float ZOrder = m_ProceduralHelper.GetZOrder(ProceduralPrefab.m_ProceduralObjectType);
+
+                Debug.Log("Sprite width:" + CurrentSpriteWidth.ToString() + " Camera view: " + ScreenWidth.ToString() + " Num of Objs: " + NumOfObjs.ToString());
                 // first in queue has to be closer to the end position
-                FirstProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * (5 - 1), 0.0f, 0.0f));
+                FirstProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * (5 - 1), 0.0f, ZOrder));
 
                 for (int i = 1; i < /*NumOfObjs*/5; ++i) 
                 {
-                    GameObject CurrentProceduralObj = AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, new Vector3(-CurrentSpriteWidth * (5 - 1 - i), 0.0f, 0.0f));
-                    //CurrentProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * i, 0.0f, 0.0f));
+                    AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, new Vector3(-CurrentSpriteWidth * (5 - 1 - i), 0.0f, ZOrder));
                 }
             }
         }
 
         public override void PerformUpdate()
         {
-            int Index = (int)m_CurrentProceduralRegionType;
-
-            foreach (SerializedProceduralObjectTypeData CurrentSerializedProceduralObjectTypeData in m_SerializedProceduralData[Index].m_SerializedProceduralObjectTypeData)
+            foreach(SerializedProceduralObjectTypePrefab ProceduralPrefab in m_SerializedProceduralObjectTypePrefab)
             {
-                ProceduralObjectType ObjType = CurrentSerializedProceduralObjectTypeData.m_ProceduralObjectType;
+                //ProceduralObjectType ObjType = CurrentSerializedProceduralObjectTypeData.m_ProceduralObjectType;
+                ProceduralObjectType ObjType = ProceduralPrefab.m_ProceduralObjectType;
 
                 // Move current object
                 MoveObjects(ObjType);
@@ -196,10 +197,12 @@ namespace BluMarble.Procedural
             {
                 ProceduralObjectType ObjType = (ProceduralObjectType)i;
 
-                if(m_DictionaryOfObjectsQueue[ObjType].Count <= 0)
+                if (m_DictionaryOfObjectsQueue[ObjType].Count <= 0)
                 {
                     continue;
                 }
+
+                float ZOrder = m_ProceduralHelper.GetZOrder(ObjType);
 
                 GameObject FirstInStack = m_DictionaryOfObjectsQueue[ObjType].Peek();
 
@@ -208,7 +211,7 @@ namespace BluMarble.Procedural
                     GameObject ObjToRelease = m_DictionaryOfObjectsQueue[ObjType].Dequeue();
                     m_SerializedProceduralObjectTypePrefab[(int)ObjType].ReleaseObject(ObjToRelease);
 
-                    AddObjectToQueue(ObjType, m_StartPosition );
+                    AddObjectToQueue(ObjType, new Vector3(m_StartPosition.x, m_StartPosition.y, ZOrder) );
                 }
             }
         }

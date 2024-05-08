@@ -16,6 +16,9 @@ namespace BluMarble.Procedural
 
         [Tooltip("Direction where the objects will move.")]
         public Vector3 m_MovingDirection;
+
+        [Tooltip("Z order where it will be placed")]
+        public float m_ZOrder = 0.0f;
     }
 
     public class ProceduralHelper : MonoBehaviour
@@ -35,6 +38,19 @@ namespace BluMarble.Procedural
             }
 
             return m_SerializedProceduralTypeMetaData[Index].m_MovingDirection;
+        }
+
+        public float GetZOrder(ProceduralObjectType ProceduralObjectTypeValue)
+        {
+            int Index = (int)(ProceduralObjectTypeValue);
+
+            if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
+            {
+                Assert.IsTrue(false, "ProceduralObjectType is not valid");
+                return 0.0f;
+            }
+
+            return m_SerializedProceduralTypeMetaData[Index].m_ZOrder;
         }
 
         public float GetSpeedOfType(ProceduralObjectType ProceduralObjectTypeValue)
