@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BlueMarble.Pool
+namespace BluMarble.Pool
 {
     public class PoolManager : BluMarble.Singleton.Singleton<PoolManager>
     {

@@ -1,5 +1,5 @@
 {
-    "name": "BlueMarble.Events",
+    "name": "BluMarble.Events",
     "rootNamespace": "BluMarble.Events",
     "references": [
         "GUID:d8353387179e81e43a218fde704986bc"

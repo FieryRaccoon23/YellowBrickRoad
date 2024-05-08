@@ -1,10 +1,12 @@
 {
-    "name": "BlueMarble.Pool",
-    "rootNamespace": "BlueMarble.Pool",
+    "name": "EasySave3Editor",
+    "rootNamespace": "",
     "references": [
-        "GUID:d8353387179e81e43a218fde704986bc"
+        "EasySave3"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

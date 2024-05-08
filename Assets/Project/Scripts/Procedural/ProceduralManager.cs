@@ -1,4 +1,4 @@
-using BlueMarble.Pool;
+using BluMarble.Pool;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +14,7 @@ namespace BluMarble.Procedural
 
         public ProceduralObjectType m_ProceduralObjectType;
 
-        private BlueMarble.Pool.ObjectPool m_ObjectPool;
+        private BluMarble.Pool.ObjectPool m_ObjectPool;
 
         public void Init(GameObject ParentObject, int Capacity, int MaxSize)
         {
@@ -65,8 +65,10 @@ namespace BluMarble.Procedural
 
         private ProceduralRegionType m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
         private ProceduralHelper m_ProceduralHelper;
+
         private const int m_PoolCapacity = 10;
         private const int m_PoolMaxValue = 20;
+        private const int m_NumOfObjsOffset = 4;
 
         public override void PerformInit()
         {
@@ -117,7 +119,31 @@ namespace BluMarble.Procedural
 
         private void InitWorld()
         {
+            // Get screen width to get an idea of how far the objects will be displayed
 
+            // If the screen is too wide, make Fog of War to hide the area
+
+            // Spawn objects from Layer0 to ProceduralObjectType.MaxBackLayers
+
+            // For objects from ProceduralObjectType.MaxBackLayers onwards, they need to be randomly generated
+            // Use camera view and not screen width
+            float ScreenWidth = Screen.width;
+            foreach (var ProceduralPrefab in m_SerializedProceduralObjectTypePrefab)
+            {
+                GameObject CurrentProceduralObj = ProceduralPrefab.GetObject();
+                SpriteRenderer CurrentProceduralObjSprite = CurrentProceduralObj.GetComponent<SpriteRenderer>();
+
+                float CurrentSpriteWidth = CurrentProceduralObjSprite.size.x;
+                float CurrentSpriteHeight = CurrentProceduralObjSprite.size.y;
+
+                int NumOfObjs = (int)(ScreenWidth / CurrentSpriteWidth);
+                NumOfObjs += m_NumOfObjsOffset;
+
+                for(int i = 1; i < NumOfObjs; ++i) 
+                {
+                    //ProceduralPrefab.GetObject();
+                }
+            }
         }
 
         public override void PerformUpdate()

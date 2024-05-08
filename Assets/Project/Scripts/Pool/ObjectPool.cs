@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace BlueMarble.Pool
+namespace BluMarble.Pool
 {
     public class ObjectPool 
     {
@@ -37,6 +37,11 @@ namespace BlueMarble.Pool
             }
 
             Result.SetActive(false);
+
+            // Set location here
+
+            BluMarble.Pool.PooledGameObject PooledGameObj = Result.AddComponent<BluMarble.Pool.PooledGameObject>();
+            PooledGameObj.m_ObjPool = this;
 
             return Result;
         }

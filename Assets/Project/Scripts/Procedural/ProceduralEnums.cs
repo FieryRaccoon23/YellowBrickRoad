@@ -17,6 +17,7 @@ namespace BluMarble.Procedural
         Layer3,
         Layer4,
         Layer5,
+        MaxBackLayers,
         Layer_Neg1,
         Layer_Neg2,
         Layer_Neg3,

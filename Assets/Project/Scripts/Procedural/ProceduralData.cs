@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace BluMarble.Procedural
 {
-    [CreateAssetMenu(fileName = "ProceduralData", menuName = "BlueMarbleScriptableObjects/ProceduralScriptableObject")]
+    [CreateAssetMenu(fileName = "ProceduralData", menuName = "BluMarbleScriptableObjects/ProceduralScriptableObject")]
     public class ProceduralData : ScriptableObject
     {
         [SerializeField]
