@@ -24,6 +24,19 @@ namespace BluMarble.Procedural
         [Tooltip("List of all the road segments.")]
         private List<SerializedProceduralTypeMetaData> m_SerializedProceduralTypeMetaData;
 
+        public Vector3 GetMovingDirection(ProceduralObjectType ProceduralObjectTypeValue)
+        {
+            int Index = (int)(ProceduralObjectTypeValue);
+
+            if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
+            {
+                Assert.IsTrue(false, "ProceduralObjectType is not valid");
+                return Vector3.zero;
+            }
+
+            return m_SerializedProceduralTypeMetaData[Index].m_MovingDirection;
+        }
+
         public float GetSpeedOfType(ProceduralObjectType ProceduralObjectTypeValue)
         {
             int Index = (int)(ProceduralObjectTypeValue);

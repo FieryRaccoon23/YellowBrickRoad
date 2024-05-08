@@ -1,5 +1,6 @@
 using BluMarble.Pool;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -65,6 +66,9 @@ namespace BluMarble.Procedural
 
         private ProceduralRegionType m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
         private ProceduralHelper m_ProceduralHelper;
+        private Dictionary<ProceduralObjectType, Queue<GameObject>> m_DictionaryOfObjectsQueue;
+        private Vector3 m_EndPosition = Vector3.zero;
+        private Vector3 m_StartPosition = Vector3.zero;
 
         private const int m_PoolCapacity = 10;
         private const int m_PoolMaxValue = 20;
@@ -74,6 +78,13 @@ namespace BluMarble.Procedural
         {
             m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
             m_ProceduralHelper = GetComponent<ProceduralHelper>();
+
+            m_DictionaryOfObjectsQueue = new Dictionary<ProceduralObjectType, Queue<GameObject>>();
+            for(int i = 0; i < (int)ProceduralObjectType.MaxNum; ++i)
+            {
+                Queue<GameObject> NewQueue = new Queue<GameObject>();
+                m_DictionaryOfObjectsQueue.Add((ProceduralObjectType)i,NewQueue);
+            }
 
 #if UNITY_EDITOR
             Validate();
@@ -117,6 +128,7 @@ namespace BluMarble.Procedural
             }
         }
 
+
         private void InitWorld()
         {
             // Get screen width to get an idea of how far the objects will be displayed
@@ -130,18 +142,22 @@ namespace BluMarble.Procedural
             float ScreenWidth = Screen.width;
             foreach (var ProceduralPrefab in m_SerializedProceduralObjectTypePrefab)
             {
-                GameObject CurrentProceduralObj = ProceduralPrefab.GetObject();
-                SpriteRenderer CurrentProceduralObjSprite = CurrentProceduralObj.GetComponent<SpriteRenderer>();
+                GameObject FirstProceduralObj = AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, m_StartPosition);
+
+                SpriteRenderer CurrentProceduralObjSprite = FirstProceduralObj.GetComponent<SpriteRenderer>();
 
                 float CurrentSpriteWidth = CurrentProceduralObjSprite.size.x;
-                float CurrentSpriteHeight = CurrentProceduralObjSprite.size.y;
 
                 int NumOfObjs = (int)(ScreenWidth / CurrentSpriteWidth);
                 NumOfObjs += m_NumOfObjsOffset;
 
-                for(int i = 1; i < NumOfObjs; ++i) 
+                // first in queue has to be closer to the end position
+                FirstProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * (5 - 1), 0.0f, 0.0f));
+
+                for (int i = 1; i < /*NumOfObjs*/5; ++i) 
                 {
-                    //ProceduralPrefab.GetObject();
+                    GameObject CurrentProceduralObj = AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, new Vector3(-CurrentSpriteWidth * (5 - 1 - i), 0.0f, 0.0f));
+                    //CurrentProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * i, 0.0f, 0.0f));
                 }
             }
         }
@@ -152,14 +168,62 @@ namespace BluMarble.Procedural
 
             foreach (SerializedProceduralObjectTypeData CurrentSerializedProceduralObjectTypeData in m_SerializedProceduralData[Index].m_SerializedProceduralObjectTypeData)
             {
-                float CurrentSpeed = m_ProceduralHelper.GetSpeedOfType(CurrentSerializedProceduralObjectTypeData.m_ProceduralObjectType);
+                ProceduralObjectType ObjType = CurrentSerializedProceduralObjectTypeData.m_ProceduralObjectType;
 
                 // Move current object
+                MoveObjects(ObjType);
 
-                // Calculate if new object needed
+                // Check if end reached
+                UpdateQueueData();
 
-                // Calculate if previous object needs to be removed
             }
+        }
+
+        private void MoveObjects(ProceduralObjectType ObjType)
+        {
+            float TranslationSpeed = m_ProceduralHelper.GetSpeedOfType(ObjType);
+            Vector3 TranslationDir = m_ProceduralHelper.GetMovingDirection(ObjType);
+
+            foreach (GameObject ObjectInQueue in m_DictionaryOfObjectsQueue[ObjType])
+            {
+                ObjectInQueue.transform.Translate(TranslationDir * TranslationSpeed * Time.deltaTime);
+            }
+        }
+
+        private void UpdateQueueData()
+        {
+            for (int i = 0; i < (int)ProceduralObjectType.MaxNum; ++i)
+            {
+                ProceduralObjectType ObjType = (ProceduralObjectType)i;
+
+                if(m_DictionaryOfObjectsQueue[ObjType].Count <= 0)
+                {
+                    continue;
+                }
+
+                GameObject FirstInStack = m_DictionaryOfObjectsQueue[ObjType].Peek();
+
+                if (FirstInStack.transform.localPosition.x < -50.0f) // m_EndPosition.x
+                {
+                    GameObject ObjToRelease = m_DictionaryOfObjectsQueue[ObjType].Dequeue();
+                    m_SerializedProceduralObjectTypePrefab[(int)ObjType].ReleaseObject(ObjToRelease);
+
+                    AddObjectToQueue(ObjType, m_StartPosition );
+                }
+            }
+        }
+
+        private GameObject AddObjectToQueue(ProceduralObjectType ObjType, Vector3 Pos) 
+        {
+            // check region type to set data
+
+            GameObject Obj = m_SerializedProceduralObjectTypePrefab[(int)ObjType].GetObject();
+            m_DictionaryOfObjectsQueue[ObjType].Enqueue(Obj);
+
+            // Set object location
+            Obj.transform.localPosition = Pos;
+
+            return Obj;
         }
     }
 }

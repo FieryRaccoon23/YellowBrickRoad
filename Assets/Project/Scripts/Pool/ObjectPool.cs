@@ -38,11 +38,6 @@ namespace BluMarble.Pool
 
             Result.SetActive(false);
 
-            // Set location here
-
-            BluMarble.Pool.PooledGameObject PooledGameObj = Result.AddComponent<BluMarble.Pool.PooledGameObject>();
-            PooledGameObj.m_ObjPool = this;
-
             return Result;
         }
 
