@@ -8,11 +8,9 @@ namespace BluMarble.Camera
         {
             UnityEngine.Camera MainCamera = UnityEngine.Camera.main;
 
-            float halfHeight = MainCamera.orthographicSize;
-            float halfWidth = MainCamera.aspect * halfHeight;
-
-            //return new Vector2(halfWidth, halfHeight);
-            return new Vector2(25.0f, 25.0f);
+            float HalfHeight = MainCamera.orthographicSize;
+            float HalfWidth = MainCamera.aspect * HalfHeight;
+            return new Vector2(HalfWidth, HalfHeight);
         }
 
         public Vector2 GetCameraView()
