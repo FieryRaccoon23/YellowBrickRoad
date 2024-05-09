@@ -51,11 +51,24 @@ namespace BluMarble.Procedural
         public ProceduralRegionType m_ProceduralRegionType;
     }
 
+    [Serializable]
+    public class SerializedProceduralTransitionData
+    {
+        public List<SerializedProceduralObjectTypeData> m_SerializedProceduralObjectTypeData = new List<SerializedProceduralObjectTypeData>();
+
+        public ProceduralRegionType m_ProceduralRegionTypeFrom;
+        public ProceduralRegionType m_ProceduralRegionTypeTo;
+    }
+
     public class ProceduralManager : BluMarble.Singleton.Singleton<ProceduralManager>
     {
         [SerializeField]
-        [Tooltip("List of all the road segments.")]
+        [Tooltip("List of all the object segments.")]
         private List<SerializedProceduralData> m_SerializedProceduralData;
+
+        [SerializeField]
+        [Tooltip("List of all the transition segments.")]
+        private List<SerializedProceduralTransitionData> m_SerializedProceduralTransitionData;
 
         [SerializeField]
         [Tooltip("List of all the road segments prefabs.")]
@@ -66,9 +79,11 @@ namespace BluMarble.Procedural
         private GameObject m_PooledParentObject;
 
         private ProceduralRegionType m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
+        private ProceduralRegionType m_LastProceduralRegionType = ProceduralRegionType.GrassLand;
         private ProceduralHelper m_ProceduralHelper;
         private Dictionary<ProceduralObjectType, Queue<GameObject>> m_DictionaryOfObjectsQueue;
         private List<GameObject> m_LastObjectInQueue;
+        private bool m_ApplyTransition = false;
 
         private const int m_PoolCapacity = 10;
         private const int m_PoolMaxValue = 20;
@@ -77,6 +92,7 @@ namespace BluMarble.Procedural
         public override void PerformInit()
         {
             m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
+            m_LastProceduralRegionType = ProceduralRegionType.GrassLand;
             m_ProceduralHelper = GetComponent<ProceduralHelper>();
 
             m_DictionaryOfObjectsQueue = new Dictionary<ProceduralObjectType, Queue<GameObject>>();
@@ -233,13 +249,13 @@ namespace BluMarble.Procedural
 
                     AddObjectToQueue(ObjType);
                 }
+
+                // for negative layers, spawn randomly
             }
         }
 
         private GameObject AddObjectToQueue(ProceduralObjectType ObjType) 
         {
-            // check region type to set data
-
             float ZOrder = m_ProceduralHelper.GetZOrder(ObjType);
             float YPos = m_ProceduralHelper.GetYPos(ObjType);
 
@@ -261,7 +277,44 @@ namespace BluMarble.Procedural
 
             m_LastObjectInQueue[(int)ObjType] = Obj;
 
+            ApplyDataSprite(CurrentProceduralObjSprite, ObjType);
+
             return Obj;
+        }
+
+        private void ApplyDataSprite(SpriteRenderer SpriteRen, ProceduralObjectType ObjType)
+        {
+            ProceduralData DataToApply = m_SerializedProceduralData[(int)m_CurrentProceduralRegionType].m_SerializedProceduralObjectTypeData[(int)ObjType].m_ProceduralData;
+
+            if (m_ApplyTransition)
+            {
+                m_ApplyTransition = false;
+
+                if (m_CurrentProceduralRegionType != m_LastProceduralRegionType)
+                {
+                    foreach (var TransitionData in m_SerializedProceduralTransitionData)
+                    {
+                        if(TransitionData.m_ProceduralRegionTypeFrom == m_LastProceduralRegionType && TransitionData.m_ProceduralRegionTypeTo == m_CurrentProceduralRegionType)
+                        {
+                            DataToApply = TransitionData.m_SerializedProceduralObjectTypeData[(int)ObjType].m_ProceduralData;
+                            break;
+                        }
+                    }
+                }
+
+            }
+
+            
+            List<Sprite> DataImages = DataToApply.DataImages;
+
+            if(DataImages.Count <= 0)
+            {
+                return;
+            }
+
+            int RandomIndex = UnityEngine.Random.Range(0, DataImages.Count);
+
+            SpriteRen.sprite = DataImages[RandomIndex];
         }
     }
 }

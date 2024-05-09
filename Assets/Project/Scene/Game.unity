@@ -275,18 +275,22 @@ MonoBehaviour:
     m_Speed: 20
     m_MovingDirection: {x: -1, y: 0, z: 0}
     m_ZOrder: 0
+    m_YPosition: 0
   - m_ProceduralObjectType: 1
     m_Speed: 5
     m_MovingDirection: {x: -1, y: 0, z: 0}
     m_ZOrder: 2
+    m_YPosition: 0
   - m_ProceduralObjectType: 2
     m_Speed: 10
     m_MovingDirection: {x: -1, y: 0, z: 0}
     m_ZOrder: 0
+    m_YPosition: 0
   - m_ProceduralObjectType: 3
     m_Speed: 5
     m_MovingDirection: {x: -1, y: 0, z: 0}
     m_ZOrder: 0
+    m_YPosition: 0
 --- !u!4 &207386824
 Transform:
   m_ObjectHideFlags: 0
@@ -318,7 +322,17 @@ MonoBehaviour:
   - m_SerializedProceduralObjectTypeData:
     - m_ProceduralData: {fileID: 11400000, guid: bf55c51036dfac24eb899a1c0f49fd62, type: 2}
       m_ProceduralObjectType: 0
+    - m_ProceduralData: {fileID: 11400000, guid: bf6ed97854d4fa442a1c33baa17a66d3, type: 2}
+      m_ProceduralObjectType: 1
     m_ProceduralRegionType: 0
+  m_SerializedProceduralTransitionData:
+  - m_SerializedProceduralObjectTypeData:
+    - m_ProceduralData: {fileID: 11400000, guid: 5f874fd3d43e49e4cbdf72ff91e45887, type: 2}
+      m_ProceduralObjectType: 0
+    - m_ProceduralData: {fileID: 11400000, guid: 227bec4feb8071b448e694d35ae6eaf1, type: 2}
+      m_ProceduralObjectType: 1
+    m_ProceduralRegionTypeFrom: 0
+    m_ProceduralRegionTypeTo: 2
   m_SerializedProceduralObjectTypePrefab:
   - m_ProceduralPrefab: {fileID: 5398195795295159543, guid: 7a25a4f1c52ab2842b61a61cf6a91e8b, type: 3}
     m_ProceduralObjectType: 0
