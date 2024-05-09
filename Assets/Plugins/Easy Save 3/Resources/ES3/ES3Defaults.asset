@@ -32,6 +32,7 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - BluMarble.Camera
     - BluMarble.Events
     - BluMarble.Pool
     - BluMarble.Procedural

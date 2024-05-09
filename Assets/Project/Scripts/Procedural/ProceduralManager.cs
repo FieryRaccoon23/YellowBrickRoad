@@ -1,4 +1,5 @@
 using BluMarble.Pool;
+using Codice.Client.Common.GameUI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,8 +68,7 @@ namespace BluMarble.Procedural
         private ProceduralRegionType m_CurrentProceduralRegionType = ProceduralRegionType.GrassLand;
         private ProceduralHelper m_ProceduralHelper;
         private Dictionary<ProceduralObjectType, Queue<GameObject>> m_DictionaryOfObjectsQueue;
-        private Vector3 m_EndPosition = Vector3.zero;
-        private Vector3 m_StartPosition = Vector3.zero;
+        private List<GameObject> m_LastObjectInQueue;
 
         private const int m_PoolCapacity = 10;
         private const int m_PoolMaxValue = 20;
@@ -80,10 +80,14 @@ namespace BluMarble.Procedural
             m_ProceduralHelper = GetComponent<ProceduralHelper>();
 
             m_DictionaryOfObjectsQueue = new Dictionary<ProceduralObjectType, Queue<GameObject>>();
-            for(int i = 0; i < (int)ProceduralObjectType.MaxNum; ++i)
+            m_LastObjectInQueue = new List<GameObject>();
+
+            for (int i = 0; i < (int)ProceduralObjectType.MaxNum; ++i)
             {
                 Queue<GameObject> NewQueue = new Queue<GameObject>();
                 m_DictionaryOfObjectsQueue.Add((ProceduralObjectType)i,NewQueue);
+
+                m_LastObjectInQueue.Add(null);
             }
 
 #if UNITY_EDITOR
@@ -131,45 +135,36 @@ namespace BluMarble.Procedural
 
         private void InitWorld()
         {
-            // Get screen width to get an idea of how far the objects will be displayed
+            Vector2 CameraView = BluMarble.Camera.CameraManager.Instance.GetCameraView();
 
-            // If the screen is too wide, make Fog of War to hide the area
-
-            // Spawn objects from Layer0 to ProceduralObjectType.MaxBackLayers
-
-            // For objects from ProceduralObjectType.MaxBackLayers onwards, they need to be randomly generated
-            // Use camera view and not screen width
-            float ScreenWidth = Screen.width;
             foreach (var ProceduralPrefab in m_SerializedProceduralObjectTypePrefab)
             {
-                GameObject FirstProceduralObj = AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, m_StartPosition);
+                GameObject FirstProceduralObj = AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType);
 
                 SpriteRenderer CurrentProceduralObjSprite = FirstProceduralObj.GetComponent<SpriteRenderer>();
 
                 float CurrentSpriteWidth = CurrentProceduralObjSprite.size.x;
 
-                int NumOfObjs = (int)(ScreenWidth / CurrentSpriteWidth);
+                int NumOfObjs = (int)(CameraView.x / CurrentSpriteWidth);
                 NumOfObjs += m_NumOfObjsOffset;
 
-                float ZOrder = m_ProceduralHelper.GetZOrder(ProceduralPrefab.m_ProceduralObjectType);
-
-                Debug.Log("Sprite width:" + CurrentSpriteWidth.ToString() + " Camera view: " + ScreenWidth.ToString() + " Num of Objs: " + NumOfObjs.ToString());
-                // first in queue has to be closer to the end position
-                FirstProceduralObj.transform.localPosition += (new Vector3(-CurrentSpriteWidth * (5 - 1), 0.0f, ZOrder));
-
-                for (int i = 1; i < /*NumOfObjs*/5; ++i) 
+                for (int i = 1; i < NumOfObjs; ++i)
                 {
-                    AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType, new Vector3(-CurrentSpriteWidth * (5 - 1 - i), 0.0f, ZOrder));
+                    AddObjectToQueue(ProceduralPrefab.m_ProceduralObjectType);
                 }
             }
+
+            // TODO: Add fog of war if screen width to big
         }
 
         public override void PerformUpdate()
         {
             foreach(SerializedProceduralObjectTypePrefab ProceduralPrefab in m_SerializedProceduralObjectTypePrefab)
             {
-                //ProceduralObjectType ObjType = CurrentSerializedProceduralObjectTypeData.m_ProceduralObjectType;
                 ProceduralObjectType ObjType = ProceduralPrefab.m_ProceduralObjectType;
+
+                // Check if queue size needs updating depending on camera view
+                UpdateQueueSizeFromCameraView(ObjType);
 
                 // Move current object
                 MoveObjects(ObjType);
@@ -178,6 +173,33 @@ namespace BluMarble.Procedural
                 UpdateQueueData();
 
             }
+        }
+
+        private void UpdateQueueSizeFromCameraView(ProceduralObjectType ObjType)
+        {
+            GameObject FirstObj = m_DictionaryOfObjectsQueue[ObjType].Peek();
+            SpriteRenderer CurrentProceduralObjSprite = FirstObj.GetComponent<SpriteRenderer>();
+
+            Vector2 CameraView = BluMarble.Camera.CameraManager.Instance.GetCameraView();
+
+            float CurrentSpriteWidth = CurrentProceduralObjSprite.size.x;
+            int NumOfObjs = (int)(CameraView.x / CurrentSpriteWidth);
+            NumOfObjs += m_NumOfObjsOffset;
+
+            //Debug.Log("Sprite width:" + CurrentSpriteWidth.ToString() + " Camera view: " + CameraView.x.ToString() + " Num of Objs: " + NumOfObjs.ToString());
+
+            if(NumOfObjs <= m_DictionaryOfObjectsQueue[ObjType].Count)
+            {
+                return;
+            }
+
+            int NewObsToAdd = NumOfObjs - m_DictionaryOfObjectsQueue[ObjType].Count;
+
+            for (int i = 1; i < NewObsToAdd; ++i)
+            {
+                AddObjectToQueue(ObjType);
+            }
+
         }
 
         private void MoveObjects(ProceduralObjectType ObjType)
@@ -202,29 +224,42 @@ namespace BluMarble.Procedural
                     continue;
                 }
 
-                float ZOrder = m_ProceduralHelper.GetZOrder(ObjType);
-
                 GameObject FirstInStack = m_DictionaryOfObjectsQueue[ObjType].Peek();
 
-                if (FirstInStack.transform.localPosition.x < -50.0f) // m_EndPosition.x
+                if (FirstInStack.transform.localPosition.x < -BluMarble.Camera.CameraManager.Instance.GetCameraView().x)
                 {
                     GameObject ObjToRelease = m_DictionaryOfObjectsQueue[ObjType].Dequeue();
                     m_SerializedProceduralObjectTypePrefab[(int)ObjType].ReleaseObject(ObjToRelease);
 
-                    AddObjectToQueue(ObjType, new Vector3(m_StartPosition.x, m_StartPosition.y, ZOrder) );
+                    AddObjectToQueue(ObjType);
                 }
             }
         }
 
-        private GameObject AddObjectToQueue(ProceduralObjectType ObjType, Vector3 Pos) 
+        private GameObject AddObjectToQueue(ProceduralObjectType ObjType) 
         {
             // check region type to set data
+
+            float ZOrder = m_ProceduralHelper.GetZOrder(ObjType);
+            float YPos = m_ProceduralHelper.GetYPos(ObjType);
 
             GameObject Obj = m_SerializedProceduralObjectTypePrefab[(int)ObjType].GetObject();
             m_DictionaryOfObjectsQueue[ObjType].Enqueue(Obj);
 
+            // Sprite width
+            SpriteRenderer CurrentProceduralObjSprite = Obj.GetComponent<SpriteRenderer>();
+            float CurrentSpriteWidth = CurrentProceduralObjSprite.size.x;
+
             // Set object location
-            Obj.transform.localPosition = Pos;
+            Vector3 LastPosition = new Vector3(-BluMarble.Camera.CameraManager.Instance.GetCameraView().x, YPos, ZOrder);
+            if (m_LastObjectInQueue[(int)ObjType])
+            {
+                LastPosition = new Vector3(m_LastObjectInQueue[(int)ObjType].transform.localPosition.x + CurrentSpriteWidth, YPos, ZOrder);
+            }
+
+            Obj.transform.localPosition = LastPosition;
+
+            m_LastObjectInQueue[(int)ObjType] = Obj;
 
             return Obj;
         }

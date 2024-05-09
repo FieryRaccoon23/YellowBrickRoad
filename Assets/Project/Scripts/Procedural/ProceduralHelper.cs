@@ -19,6 +19,9 @@ namespace BluMarble.Procedural
 
         [Tooltip("Z order where it will be placed")]
         public float m_ZOrder = 0.0f;
+
+        [Tooltip("Y position")]
+        public float m_YPosition = 0.0f;
     }
 
     public class ProceduralHelper : MonoBehaviour
@@ -31,24 +34,43 @@ namespace BluMarble.Procedural
         {
             int Index = (int)(ProceduralObjectTypeValue);
 
+#if UNITY_EDITOR
             if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
             {
                 Assert.IsTrue(false, "ProceduralObjectType is not valid");
                 return Vector3.zero;
             }
+#endif
 
             return m_SerializedProceduralTypeMetaData[Index].m_MovingDirection;
+        }
+
+        public float GetYPos(ProceduralObjectType ProceduralObjectTypeValue)
+        {
+            int Index = (int)(ProceduralObjectTypeValue);
+
+#if UNITY_EDITOR
+            if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
+            {
+                Assert.IsTrue(false, "ProceduralObjectType is not valid");
+                return 0.0f;
+            }
+#endif
+
+            return m_SerializedProceduralTypeMetaData[Index].m_YPosition;
         }
 
         public float GetZOrder(ProceduralObjectType ProceduralObjectTypeValue)
         {
             int Index = (int)(ProceduralObjectTypeValue);
 
+#if UNITY_EDITOR
             if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
             {
                 Assert.IsTrue(false, "ProceduralObjectType is not valid");
                 return 0.0f;
             }
+#endif
 
             return m_SerializedProceduralTypeMetaData[Index].m_ZOrder;
         }
@@ -57,11 +79,13 @@ namespace BluMarble.Procedural
         {
             int Index = (int)(ProceduralObjectTypeValue);
 
-            if(Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
+#if UNITY_EDITOR
+            if (Index < 0 || Index >= m_SerializedProceduralTypeMetaData.Count)
             {
                 Assert.IsTrue(false, "ProceduralObjectType is not valid");
                 return 0.0f; 
             }
+#endif
 
             float Speed = m_SerializedProceduralTypeMetaData[Index].m_Speed;
 
