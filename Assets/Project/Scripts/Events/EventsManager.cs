@@ -9,5 +9,11 @@ namespace BluMarble.Events
         public UnityEvent m_LoadingStarted;
         public UnityEvent m_LoadingEnded;
 
+
+        public override void PerformFinish()
+        {
+            m_LoadingStarted.RemoveAllListeners();
+            m_LoadingEnded.RemoveAllListeners();
+        }
     }
 }

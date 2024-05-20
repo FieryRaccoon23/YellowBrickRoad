@@ -34,6 +34,7 @@ MonoBehaviour:
     - Assembly-CSharp-firstpass
     - BluMarble.Camera
     - BluMarble.Events
+    - BluMarble.Inventory
     - BluMarble.Pool
     - BluMarble.Procedural
     - BluMarble.Singleton

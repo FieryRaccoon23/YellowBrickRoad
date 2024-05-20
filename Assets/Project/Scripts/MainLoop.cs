@@ -25,14 +25,6 @@ namespace BluMarble.Core
             BluMarble.Events.EventsManager.Instance.m_LoadingStarted.Invoke();
             StartLoading();
             BluMarble.Events.EventsManager.Instance.m_LoadingEnded.Invoke();
-
-            // Cache game actions
-            m_ActionList = new Dictionary<GameState, Action>();
-            m_ActionList.Add(GameState.Loading, DoNothing);
-            m_ActionList.Add(GameState.Start, StartGame);
-            m_ActionList.Add(GameState.Running, UpdateGame);
-            m_ActionList.Add(GameState.End, EndGame);
-            m_ActionList.Add(GameState.Finished, FinishGame);
         }
 
         private void StartLoading()
@@ -54,13 +46,32 @@ namespace BluMarble.Core
                 Assert.IsTrue(false, "EventsManager not found!");
                 return;
             }
+            if (BluMarble.Inventory.InventoryManager.Instance == null)
+            {
+                Assert.IsTrue(false, "InventoryManager not found!");
+                return;
+            }
 #endif
             // Init all singletons
+            BluMarble.Events.EventsManager.Instance.PerformInit();
             BluMarble.Procedural.ProceduralManager.Instance.PerformInit();
             BluMarble.UI.UIManager.Instance.PerformInit();
-            BluMarble.Events.EventsManager.Instance.PerformInit();
+            BluMarble.Inventory.InventoryManager.Instance.PerformInit();
+
+            InitActionsList();
 
             m_CurrentGameState = GameState.Start;
+        }
+
+        private void InitActionsList()
+        {
+            // Cache game actions
+            m_ActionList = new Dictionary<GameState, Action>();
+            m_ActionList.Add(GameState.Loading, DoNothing);
+            m_ActionList.Add(GameState.Start, StartGame);
+            m_ActionList.Add(GameState.Running, UpdateGame);
+            m_ActionList.Add(GameState.End, EndGame);
+            m_ActionList.Add(GameState.Finished, FinishGame);
         }
 
         private void Update()
